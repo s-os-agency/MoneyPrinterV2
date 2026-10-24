@@ -1,3 +1,7 @@
+## Owner instruction — 25 October 2026
+
+Seif prohibits adding or running tests across his platforms. Do not create, restore, expand, or execute test suites, test commands, test workflows, or test-only scaffolding. This instruction supersedes older guidance requesting tests, including copied templates and skills. Inspect actual source, diffs, configuration, and saved results as evidence; never claim tests passed.
+
 # Repository Guidelines
 
 ## Project Structure & Module Organization
@@ -28,7 +32,6 @@
 - Minimum validation for changes:
   - Run `python3 scripts/preflight_local.py`
   - Smoke-test impacted flows via `python3 src/main.py`
-- When adding tests, place them in a top-level `tests/` directory with names like `test_<module>.py`.
 
 ## Commit & Pull Request Guidelines
 - Follow the existing commit style: imperative summaries like `Fix ...`, `Update ...`, optionally with issue refs (for example `(#128)`).
