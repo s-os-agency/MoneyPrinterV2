@@ -42,3 +42,12 @@ Seif prohibits adding or running tests across his platforms. Do not create, rest
 ## Security & Configuration Tips
 - Treat `config.json` as environment-specific; do not commit real API keys or private profile paths.
 - Start from `config.example.json` and prefer environment variables where supported (for example `GEMINI_API_KEY`).
+
+
+## Seif's instruction — 1 November 2026
+
+- Write short, clear English on product screens and in explanations.
+- Keep Seif's permissions explicit. He owns the work and makes the decisions.
+- Keep internal stages and monitoring details out of his product screens.
+- Continue authorized work without adding review waits or unnecessary questions.
+- Simplify the wording without changing access rights, stored data or working code names.
