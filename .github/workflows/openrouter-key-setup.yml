@@ -1,0 +1,44 @@
+name: Create capped OpenRouter worker key
+
+on:
+  workflow_dispatch:
+    inputs:
+      key_name:
+        description: Unique worker key name (MoneyPrinterV2-text-worker-...)
+        required: true
+        type: string
+      delivery_public_key_b64:
+        description: Base64 RSA public key for encrypted delivery (never a private key)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: openrouter-worker-key-creation
+  cancel-in-progress: false
+
+jobs:
+  create:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_MANAGEMENT_API_KEY || secrets.OPEN_ROUTER_API_KEY }}
+      WORKER_KEY_NAME: ${{ inputs.key_name }}
+      DELIVERY_PUBLIC_KEY_B64: ${{ inputs.delivery_public_key_b64 }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Create capped key and encrypt delivery
+        run: python3 scripts/openrouter_create_worker_key.py
+      - name: Save encrypted delivery
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: encrypted-worker-key-${{ github.run_id }}
+          path: key-delivery/
+          retention-days: 1
+          if-no-files-found: ignore
