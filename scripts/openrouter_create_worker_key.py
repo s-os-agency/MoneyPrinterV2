@@ -27,8 +27,12 @@ def main():
         public_path = Path(temporary) / "public.pem"
         public_path.write_bytes(public)
         # Validate the delivery destination before creating a credential.
-        subprocess.run(["openssl", "pkey", "-pubin", "-in", str(public_path), "-noout"],
-                       check=True, capture_output=True)
+        public_info = subprocess.run([
+            "openssl", "rsa", "-pubin", "-in", str(public_path), "-text", "-noout",
+        ], check=True, capture_output=True).stdout.decode("ascii", errors="replace")
+        bits = re.search(r"Public-Key: \((\d+) bit\)", public_info)
+        if not bits or int(bits[1]) < 4096:
+            raise ValueError("Use a delivery RSA public key of at least4096bits before creating a credential.")
         seen = set()
         for offset in range(0, 10000, 100):
             keys = client._request(f"/keys?include_disabled=true&offset={offset}").get("data")
