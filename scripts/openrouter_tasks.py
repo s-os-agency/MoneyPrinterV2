@@ -57,10 +57,19 @@ def main() -> int:
     parser.add_argument("--state-dir", type=Path, default=ROOT / ".mp" / "openrouter")
     parser.add_argument("--limit", type=int, default=3)
     parser.add_argument("--list-models", action="store_true", help="Print the currently eligible text model IDs and catalog prices.")
+    parser.add_argument("--account-status", action="store_true", help="Read key authorization and numeric limits without generating text.")
     args = parser.parse_args()
     if not 1 <= args.limit <= 20:
         parser.error("--limit must be between 1 and 20")
     client = OpenRouterClient()
+    if args.account_status:
+        data = client._request("/key").get("data", {})
+        status = {"key_authorized": True, "is_free_tier": data.get("is_free_tier") is True}
+        for field in ("limit", "limit_remaining", "usage_monthly"):
+            value = data.get(field)
+            status[field] = value if isinstance(value, (int, float)) and not isinstance(value, bool) else None
+        print(json.dumps(status))
+        return 0
     if args.list_models:
         for model in client.eligible_models():
             print(json.dumps({"id": model["id"], "pricing": model["pricing"]}))

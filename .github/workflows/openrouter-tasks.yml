@@ -2,6 +2,12 @@ name: OpenRouter task drafts
 
 on:
   workflow_dispatch:
+    inputs:
+      operation:
+        type: choice
+        options: [drafts, account-status]
+        default: drafts
+        description: Produce queued drafts or read key authorization without generation
   schedule:
     - cron: '17 * * * *'
 
@@ -38,7 +44,11 @@ jobs:
           restore-keys: |
             openrouter-task-state-
       - name: Produce queued drafts
+        if: inputs.operation != 'account-status'
         run: python3 scripts/openrouter_tasks.py --limit 3
+      - name: Read account authorization
+        if: inputs.operation == 'account-status'
+        run: python3 scripts/openrouter_tasks.py --account-status
       - name: Save task execution state
         if: always()
         uses: actions/cache/save@v4
@@ -53,3 +63,4 @@ jobs:
           path: .mp/openrouter/outputs/*.md
           if-no-files-found: ignore
           retention-days: 7
+          include-hidden-files: true
