@@ -16,6 +16,7 @@ from prettytable import PrettyTable
 from classes.Outreach import Outreach
 from classes.AFM import AffiliateMarketing
 from llm_provider import list_models, select_model, get_active_model
+from classes.OpenRouter import configured_model as get_configured_llm_model, provider_name
 
 def main():
     """Main entry point for the application, providing a menu-driven interface
@@ -444,8 +445,8 @@ if __name__ == "__main__":
     # Fetch MP3 Files
     fetch_songs()
 
-    # Select Ollama model — use config value if set, otherwise pick interactively
-    configured_model = get_ollama_model()
+    # Select the configured provider model, otherwise pick interactively.
+    configured_model = get_configured_llm_model()
     if configured_model:
         select_model(configured_model)
         success(f"Using configured model: {configured_model}")
@@ -453,14 +454,14 @@ if __name__ == "__main__":
         try:
             models = list_models()
         except Exception as e:
-            error(f"Could not connect to Ollama: {e}")
+            error(f"Could not connect to {provider_name()}: {e}")
             sys.exit(1)
 
         if not models:
-            error("No models found on Ollama. Pull a model first (e.g. 'ollama pull llama3.2:3b').")
+            error(f"No models available for {provider_name()} with the configured pricing policy.")
             sys.exit(1)
 
-        info("\n========== OLLAMA MODELS =========", False)
+        info(f"\n========== {provider_name().upper()} MODELS =========", False)
         for idx, model_name in enumerate(models):
             print(colored(f" {idx + 1}. {model_name}", "cyan"))
         info("==================================\n", False)

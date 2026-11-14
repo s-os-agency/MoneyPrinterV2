@@ -68,6 +68,9 @@ python src/main.py
 
 ## Documentation
 
+For OpenRouter model routing, the $50 monthly spending ceiling and scheduled
+draft tasks, see [OpenRouter task worker](docs/OpenRouter.md).
+
 All relevant document can be found [here](docs/).
 
 ## Scripts

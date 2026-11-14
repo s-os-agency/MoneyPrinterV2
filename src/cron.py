@@ -8,6 +8,7 @@ from classes.Tts import TTS
 from classes.Twitter import Twitter
 from classes.YouTube import YouTube
 from llm_provider import select_model
+from classes.OpenRouter import configured_model
 
 def main():
     """Main function to post content to Twitter or upload videos to YouTube.
@@ -29,12 +30,12 @@ def main():
         None. The function performs operations based on the purpose and account UUID and does not return any value."""
     purpose = str(sys.argv[1])
     account_id = str(sys.argv[2])
-    model = str(sys.argv[3]) if len(sys.argv) > 3 else None
+    model = str(sys.argv[3]) if len(sys.argv) > 3 else configured_model()
 
     if model:
         select_model(model)
     else:
-        error("No Ollama model specified. Pass model name as third argument.")
+        error("No model configured. Pass a provider model as the third argument.")
         sys.exit(1)
 
     verbose = get_verbose()

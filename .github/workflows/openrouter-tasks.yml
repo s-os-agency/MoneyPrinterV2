@@ -1,0 +1,55 @@
+name: OpenRouter task drafts
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 * * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: openrouter-task-drafts
+  cancel-in-progress: false
+
+jobs:
+  drafts:
+    if: vars.OPENROUTER_TASKS_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY || secrets.OPEN_ROUTER_API_KEY }}
+      OPENROUTER_ALLOW_PAID: ${{ vars.OPENROUTER_ALLOW_PAID || 'false' }}
+      OPENROUTER_MONTHLY_USD: '50'
+      OPENROUTER_MAX_REQUEST_USD: '0.05'
+      OPENROUTER_MAX_PROMPT_PER_MILLION: '1'
+      OPENROUTER_MAX_COMPLETION_PER_MILLION: '2'
+      OPENROUTER_MAX_TOKENS: '2048'
+      TASK_TIMEZONE: Asia/Dubai
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/cache/restore@v4
+        with:
+          path: .mp/openrouter/runs.sqlite3
+          key: openrouter-task-state-${{ github.run_id }}
+          restore-keys: |
+            openrouter-task-state-
+      - name: Produce queued drafts
+        run: python3 scripts/openrouter_tasks.py --limit 3
+      - name: Save task execution state
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: .mp/openrouter/runs.sqlite3
+          key: openrouter-task-state-${{ github.run_id }}
+      - name: Save public-queue draft files
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: openrouter-drafts-${{ github.run_id }}
+          path: .mp/openrouter/outputs/*.md
+          if-no-files-found: ignore
+          retention-days: 7
