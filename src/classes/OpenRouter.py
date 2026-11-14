@@ -82,8 +82,14 @@ class OpenRouterClient:
             # Classify known rejection reasons without logging provider text or prompts.
             reason = "Request rejected"
             try:
-                detail = json.loads(error.read(32768)).get("error", {})
+                raw = error.read(32768).decode("utf-8", errors="replace")
+                if any(marker in raw.lower() for marker in ("cf-chl-", "cloudflare", "just a moment", "access denied")):
+                    reason = "HTTP gateway access restriction"
+                detail = json.loads(raw).get("error", {})
                 message = str(detail.get("message", "")).lower()
+                metadata = detail.get("metadata", {})
+                if isinstance(metadata, dict):
+                    message += " " + str(metadata.get("raw", "")).lower()
                 for terms, label in [
                     (("data policy", "privacy"), "Account data-policy settings rejected this provider"),
                     (("country", "region", "geographic"), "Provider geographic restriction"),
@@ -91,6 +97,8 @@ class OpenRouterClient:
                     (("disabled", "deactivated"), "Account or key disabled"),
                     (("rate limit", "rate-limit"), "Provider rate limit"),
                     (("api key", "unauthorized", "authentication"), "Key authentication rejected"),
+                    (("provisioning", "management key"), "Management key is not authorized for this endpoint"),
+                    (("forbidden", "permission"), "Provider permission restriction"),
                 ]:
                     if any(term in message for term in terms):
                         reason = label

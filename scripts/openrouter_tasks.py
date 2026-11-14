@@ -63,6 +63,10 @@ def main() -> int:
         parser.error("--limit must be between 1 and 20")
     client = OpenRouterClient()
     if args.account_status:
+        print(json.dumps({"key_present": bool(client.key),
+                          "key_has_outer_whitespace": client.key != client.key.strip(),
+                          "key_has_bearer_prefix": client.key.lower().startswith("bearer "),
+                          "key_has_expected_prefix": client.key.startswith("sk-or-")}))
         data = client._request("/key").get("data", {})
         status = {"key_authorized": True, "is_free_tier": data.get("is_free_tier") is True}
         for field in ("limit", "limit_remaining", "usage_monthly"):
