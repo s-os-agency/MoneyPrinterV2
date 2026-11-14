@@ -133,6 +133,10 @@ seven-day Actions artifacts. This repository is public: do not place private
 client prompts or generated private work in that queue or its artifacts. Private
 work must use an existing authorized private runtime/destination instead.
 
+For a rejected request, a manual dispatch with `operation: account-status` reads
+key authorization and numeric account limits only. It does not run the queue,
+generate text, expose the key, or become a prerequisite for production tasks.
+
 ## Operational state of this change
 
 Implementation and scheduling configuration can be prepared without the key.
