@@ -79,8 +79,25 @@ class OpenRouterClient:
             with urlopen(Request(API_BASE + path, data=data, headers=headers), timeout=120) as response:
                 result = json.load(response)
         except HTTPError as error:
-            # Provider error bodies may contain prompts. Keep them out of logs.
-            raise OpenRouterError(f"OpenRouter HTTP {error.code}; no automatic POST retry.") from None
+            # Classify known rejection reasons without logging provider text or prompts.
+            reason = "Request rejected"
+            try:
+                detail = json.loads(error.read(32768)).get("error", {})
+                message = str(detail.get("message", "")).lower()
+                for terms, label in [
+                    (("data policy", "privacy"), "Account data-policy settings rejected this provider"),
+                    (("country", "region", "geographic"), "Provider geographic restriction"),
+                    (("insufficient", "credits", "balance"), "Account credit or balance restriction"),
+                    (("disabled", "deactivated"), "Account or key disabled"),
+                    (("rate limit", "rate-limit"), "Provider rate limit"),
+                    (("api key", "unauthorized", "authentication"), "Key authentication rejected"),
+                ]:
+                    if any(term in message for term in terms):
+                        reason = label
+                        break
+            except (ValueError, AttributeError, OSError):
+                pass
+            raise OpenRouterError(f"OpenRouter HTTP {error.code} at {path}: {reason}; no automatic POST retry.") from None
         except (URLError, TimeoutError, OSError):
             raise OpenRouterError("OpenRouter connection failed; completion outcome may be unknown.") from None
         except (ValueError, UnicodeError):
