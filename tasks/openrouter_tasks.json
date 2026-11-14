@@ -1,0 +1,18 @@
+[
+  {
+    "id": "website-copywriting-delivery-outline",
+    "enabled": true,
+    "repeat": "once",
+    "kind": "copywriting",
+    "model": "auto",
+    "prompt": "Create a concise editable delivery outline and proposal DRAFT for a publicly advertised USD500 website-copywriting brief. The requested outputs are positioning, product story, website page copy, keyword mapping, a presentation storyline, voice guidelines and an editable handoff for an AI/LLM product. No product facts, client name, page count, previous experience or results have been supplied. Do not invent them. State the exact inputs required from the client. Keep scope within an advertised budget rather than claiming a contract. Do not imply the proposal was submitted or any money received. Produce the draft, not an audit, inspection checklist or market-news summary."
+  },
+  {
+    "id": "document-service-copy-variant",
+    "enabled": false,
+    "repeat": "daily",
+    "kind": "routine",
+    "model": "auto",
+    "prompt": "Write one original, concise service-description variant for long-document typing, scanned PDF-to-Word and PDF-table-to-CSV conversion. Name the source inputs, editable deliverable, per-page or per-table scope and handling of unreadable text. Do not invent rates, customers, speed claims, qualifications or guaranteed revenue. Produce a ready-to-edit service draft only; no external messages or audit reports."
+  }
+]
