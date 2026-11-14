@@ -142,6 +142,9 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
-    except (OpenRouterError, ValueError, OSError):
+    except OpenRouterError as error:
+        print(str(error))
+        raise SystemExit(1)
+    except (ValueError, OSError):
         print("Worker stopped because its queue, configuration or connection is unavailable. No automatic retry.")
         raise SystemExit(1)
