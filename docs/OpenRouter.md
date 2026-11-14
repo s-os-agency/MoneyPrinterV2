@@ -16,6 +16,9 @@ Name the secret exactly `OPENROUTER_API_KEY` and paste the key into its **Secret
 field. Never put it in a source file, issue, workflow input, chat, task prompt or
 `config.example.json`.
 
+The Actions workflow also accepts the existing secret name `OPEN_ROUTER_API_KEY`.
+It passes either secret to the worker as `OPENROUTER_API_KEY`.
+
 For a local runtime, provide the same name as a process environment variable or
 through the runtime's secret store. The client does not read a key from config.
 
