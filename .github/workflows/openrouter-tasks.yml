@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   drafts:
-    if: vars.OPENROUTER_TASKS_ENABLED == 'true'
+    if: github.event_name == 'workflow_dispatch' || vars.OPENROUTER_TASKS_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 12
     env:
