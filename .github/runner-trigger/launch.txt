@@ -1,1 +1,1 @@
-Launch requested 2026-11-17. Trigger OpenRouter draft worker via GitHub Actions push event.
+Launch requested 2026-11-17 09:05 Asia/Dubai. Execute one new OpenRouter public-safe draft task (attempt-3), and retain the workflow run and artifact receipts.
