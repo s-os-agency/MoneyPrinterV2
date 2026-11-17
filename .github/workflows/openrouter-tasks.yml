@@ -8,6 +8,9 @@ on:
         options: [drafts, account-status]
         default: drafts
         description: Produce queued drafts or read key authorization without generation
+  push:
+    branches: [main]
+    paths: ['.github/runner-trigger/launch.txt']
   schedule:
     - cron: '17 * * * *'
 
@@ -20,7 +23,7 @@ concurrency:
 
 jobs:
   drafts:
-    if: github.event_name == 'workflow_dispatch' || vars.OPENROUTER_TASKS_ENABLED == 'true'
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push' || vars.OPENROUTER_TASKS_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 12
     env:
